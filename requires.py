@@ -1,5 +1,4 @@
 from charms.reactive import Endpoint
-import json
 
 
 class ServiceMeshRequires(Endpoint):
@@ -8,9 +7,9 @@ class ServiceMeshRequires(Endpoint):
             rewrite = prefix
 
         for relation in self.relations:
-            relation.to_publish_raw['route'] = json.dumps({
+            relation.to_publish['route'] = {
                 'prefix': prefix,
                 'rewrite': rewrite,
                 'service': service,
                 'port': port
-            })
+            }
