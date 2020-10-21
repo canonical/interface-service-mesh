@@ -1,0 +1,4 @@
+name: service-mesh
+summary: Service Mesh Interface
+version: 1
+repo: https://github.com/juju-solutions/interface-service-mesh
