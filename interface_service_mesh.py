@@ -1,8 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import List
 
-from provide_interface import ProvideAppInterface
-from require_interface import RequireAppInterface
+from serialized_data_interface import SerializedDataInterface
 
 SERVICE_MESH_SCHEMA = """
 prefix:
@@ -26,8 +25,13 @@ class Auth:
     response_headers: List[str]
 
 
-class ServiceMeshRequires(ProvideAppInterface):
-    SCHEMA = SERVICE_MESH_SCHEMA
+class ServiceMeshRequires(SerializedDataInterface):
+    def __init__(
+        self,
+        charm,
+        relation_name,
+    ):
+        super().__init__(charm, relation_name, SERVICE_MESH_SCHEMA, {"v1"}, "requires")
 
     def add_route(
         self, prefix, service, port, rewrite=None, ingress=False, auth: dict = {}
@@ -39,7 +43,7 @@ class ServiceMeshRequires(ProvideAppInterface):
         if auth:
             auth = asdict(Auth(**auth))
 
-        self.update_relation_data(
+        self.send_data(
             {
                 "prefix": prefix,
                 "rewrite": rewrite,
@@ -51,8 +55,13 @@ class ServiceMeshRequires(ProvideAppInterface):
         )
 
 
-class ServiceMeshProvides(RequireAppInterface):
-    SCHEMA = SERVICE_MESH_SCHEMA
+class ServiceMeshProvides(SerializedDataInterface):
+    def __init__(
+        self,
+        charm,
+        relation_name,
+    ):
+        super().__init__(charm, relation_name, SERVICE_MESH_SCHEMA, {"v1"}, "provides")
 
     def routes(self):
-        return self.data
+        return self.get_data()
